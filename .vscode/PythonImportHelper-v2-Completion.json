@@ -1,0 +1,108 @@
+[
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "asyncio",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "asyncio",
+        "description": "asyncio",
+        "detail": "asyncio",
+        "documentation": {}
+    },
+    {
+        "label": "websockets",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "websockets",
+        "description": "websockets",
+        "detail": "websockets",
+        "documentation": {}
+    },
+    {
+        "label": "OpenAI",
+        "importPath": "openai",
+        "description": "openai",
+        "isExtraImport": true,
+        "detail": "openai",
+        "documentation": {}
+    },
+    {
+        "label": "texttospeech",
+        "importPath": "google.cloud",
+        "description": "google.cloud",
+        "isExtraImport": true,
+        "detail": "google.cloud",
+        "documentation": {}
+    },
+    {
+        "label": "io",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "io",
+        "description": "io",
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "ssl",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "ssl",
+        "description": "ssl",
+        "detail": "ssl",
+        "documentation": {}
+    },
+    {
+        "label": "oai_key",
+        "kind": 5,
+        "importPath": "server",
+        "description": "server",
+        "peekOfCode": "oai_key = os.getenv('OPENAI_API_KEY')\nclient = OpenAI(api_key=oai_key)\nos.environ[\"GOOGLE_APPLICATION_CREDENTIALS\"] = \"gtt-del.json\"\ntts_client = texttospeech.TextToSpeechClient()\nasync def transcribe_audio(client, audio_buffer):\n    audio_buffer.seek(0)\n    file_tuple = (\"audio.webm\", audio_buffer, \"audio/webm\")\n    transcription = client.audio.transcriptions.create(\n        model=\"whisper-1\",\n        file=file_tuple,",
+        "detail": "server",
+        "documentation": {}
+    },
+    {
+        "label": "client",
+        "kind": 5,
+        "importPath": "server",
+        "description": "server",
+        "peekOfCode": "client = OpenAI(api_key=oai_key)\nos.environ[\"GOOGLE_APPLICATION_CREDENTIALS\"] = \"gtt-del.json\"\ntts_client = texttospeech.TextToSpeechClient()\nasync def transcribe_audio(client, audio_buffer):\n    audio_buffer.seek(0)\n    file_tuple = (\"audio.webm\", audio_buffer, \"audio/webm\")\n    transcription = client.audio.transcriptions.create(\n        model=\"whisper-1\",\n        file=file_tuple,\n        response_format=\"text\"",
+        "detail": "server",
+        "documentation": {}
+    },
+    {
+        "label": "os.environ[\"GOOGLE_APPLICATION_CREDENTIALS\"]",
+        "kind": 5,
+        "importPath": "server",
+        "description": "server",
+        "peekOfCode": "os.environ[\"GOOGLE_APPLICATION_CREDENTIALS\"] = \"gtt-del.json\"\ntts_client = texttospeech.TextToSpeechClient()\nasync def transcribe_audio(client, audio_buffer):\n    audio_buffer.seek(0)\n    file_tuple = (\"audio.webm\", audio_buffer, \"audio/webm\")\n    transcription = client.audio.transcriptions.create(\n        model=\"whisper-1\",\n        file=file_tuple,\n        response_format=\"text\"\n    )",
+        "detail": "server",
+        "documentation": {}
+    },
+    {
+        "label": "tts_client",
+        "kind": 5,
+        "importPath": "server",
+        "description": "server",
+        "peekOfCode": "tts_client = texttospeech.TextToSpeechClient()\nasync def transcribe_audio(client, audio_buffer):\n    audio_buffer.seek(0)\n    file_tuple = (\"audio.webm\", audio_buffer, \"audio/webm\")\n    transcription = client.audio.transcriptions.create(\n        model=\"whisper-1\",\n        file=file_tuple,\n        response_format=\"text\"\n    )\n    return transcription",
+        "detail": "server",
+        "documentation": {}
+    }
+]

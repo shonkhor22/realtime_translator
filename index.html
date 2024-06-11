@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-Time Translation</title>
+    <h1>COMP8420 Advanced Natural Language Processing</h1>
+    <h2>Major project /Ashish Ganda, Delgersuren Byambasuren/</h2>
+    <style>
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            display: none;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Translation</h1>
+    <button id="startBtn" onclick="startRecording()">Start Recording</button>
+    <button id="stopBtn" onclick="stopRecording()" disabled>Stop Recording</button>
+    <button id="disconnectBtn" onclick="disconnectServer()" disabled>Disconnect</button>
+
+    <div>
+        <h2>Transcription:</h2>
+        <p id="transcription">Waiting for transcription...</p>
+    </div>
+    <div>
+        <h2>Translation:</h2>
+        <p id="translation">Waiting for translation...</p>
+    </div>
+    <div>
+        <h2>Audio Response:</h2>
+        <audio id="audioResponse" controls></audio>
+    </div>
+    <div class="status-message" id="statusMessage"></div>
+    <div class="loader" id="loader"></div>
+
+    <script>
+        let socket;
+        let mediaRecorder;
+        let audioStream;
+
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+        }
+
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function updateStatus(message) {
+            document.getElementById('statusMessage').innerText = message;
+        }
+
+
+        function startRecording() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+            const socket = new WebSocket(`${wsProtocol}://34.151.127.60:8765`);
+
+            // socket = new WebSocket('ws://localhost:8765');
+            socket.onopen = () => {
+                console.log('Connected to server');
+                updateStatus('Connected to server');
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('disconnectBtn').disabled = false;
+
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        audioStream = stream;
+
+                        function createRecorder() {
+                            mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+
+                            mediaRecorder.ondataavailable = event => {
+                                if (event.data.size > 0) {
+                                    const blob = new Blob([event.data], { type: 'audio/webm' });
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                        if (socket.readyState === WebSocket.OPEN) {
+                                            const arrayBuffer = reader.result;
+                                        
+                                            socket.send(arrayBuffer);
+                                        } else {
+                                            console.warn('WebSocket is not open:', socket.readyState);
+                                        }
+                                    };
+                                    reader.readAsArrayBuffer(blob);
+                                }
+                            };
+
+                            mediaRecorder.start(10000);  // Record for 10 seconds
+                        }
+
+                        createRecorder();
+
+                        // Restart the recorder every 10 seconds to ensure headers are included
+                        setInterval(() => {
+                            if (mediaRecorder.state !== 'inactive') {
+                                mediaRecorder.stop();
+                            }
+                            createRecorder();
+                        }, 10000);
+
+                        console.log('MediaRecorder started');
+                        updateStatus('Recording...');
+                    })
+                    .catch(error => {
+                        console.error('Error accessing microphone:', error);
+                        updateStatus('Error accessing microphone');
+                    });
+            };
+
+            socket.onmessage = (event) => {
+                console.log('Received message from server');
+                const data = JSON.parse(event.data);
+                console.log('Data:', data);
+                document.getElementById('transcription').innerText = data.transcription;
+                document.getElementById('translation').innerText = data.translation;
+
+                const audioResponse = data.audio_response;
+                const audioBytes = new Uint8Array(audioResponse.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+                const audioBlob = new Blob([audioBytes], { type: 'audio/mp3' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = document.getElementById('audioResponse');
+                audio.src = audioUrl;
+                audio.play();
+
+                updateStatus('Translation and audio response received');
+                hideLoader();
+            };
+
+            socket.onclose = () => {
+                console.log('Disconnected from server');
+                updateStatus('Disconnected from server');
+                alert('Error: Disconnected from WebSocket server.');
+                if (audioStream) {
+                    audioStream.getTracks().forEach(track => track.stop());
+                    console.log('Audio stream stopped');
+                }
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                document.getElementById('disconnectBtn').disabled = true;
+                hideLoader();
+            };
+
+            socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateStatus('WebSocket error');
+                alert('Error: WebSocket connection error.');
+                hideLoader();
+            };
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                console.log('MediaRecorder stopped');
+                updateStatus('Recording stopped');
+                hideLoader();
+            }
+            if (audioStream) {
+                audioStream.getTracks().forEach(track => track.stop());
+                console.log('Audio stream stopped');
+            }
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        }
+
+        function disconnectServer() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.close();
+                console.log('WebSocket closed');
+                updateStatus('WebSocket closed');
+            }
+            document.getElementById('disconnectBtn').disabled = true;
+        }
+
+
+
+    </script>
+</body>
+</html>
