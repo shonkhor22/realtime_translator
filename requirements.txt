@@ -2,15 +2,3 @@ websockets
 openai
 google-cloud-texttospeech
 
-
-# scp -i ~/.ssh/id_rsa server_stream.py shonhor22@34.151.127.60:/home/shonhor22/nlpproject
-# scp -i ~/.ssh/id_rsa /Users/delb/Documents/2024S1/NLP/dauntless-gate-128103-f99ede4152be.json shonhor22@34.151.127.60:/home/shonhor22/nlpproject
-# scp -i ~/.ssh/id_rsa server.py shonhor22@34.151.127.60:/home/shonhor22/nlpproject
-
-
-# echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+5rAhc91qFYt/WEToEY3xhGe3dz5CuizUdpwRF2LYELXWtVIR3Q4u0OkjMK8eaRsPBg+t1JUr7aBfE/7ngJosphb/N0kCKhe1ldVCKwsRqhafs6Bytf4w9C5wWucxhOOTx2BjtxiB+HrOnB/H2snYQEv0B4NFX1/ex64aLCjrSflUl+IZ+iLSGm+3Jg87KmtiXEZrXUgDmCUvihHhQQEYTxyw5n8QIv1uZCw/dLfud/SrjpSnRExBPfDSSecie+iv2JhnFJAZI9wCBiQitbFODrEv1UMkHA5tbvJrwcMHBFI9/8/ouYfL7BHpmxnoj1u6sCe6ccsO1oB/gfJhi6/t delb@Dels-MacBook-Pro.local" >> ~/.ssh/authorized_keys
-
-
-# export OPENAI_API_KEY='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'
-
-# http://storage.googleapis.com/del20240608nlp/index.html
