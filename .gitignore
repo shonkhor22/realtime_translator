@@ -5,6 +5,7 @@ __pycache__/
 help.txt
 # C extensions
 *.so
+gtt-del.json
 
 # Distribution / packaging
 .Python
